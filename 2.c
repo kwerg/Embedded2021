@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "myProject.h"
 
-int printMyName2(void) //1~2중 하나. 파일이름에 맞게 할 것
+int printMyName2(void)
 {
-printf ("2. my name is 김태형\n"); //자기 이름
+printf ("2. my name is 김태형\n");
 return 1;
 }
