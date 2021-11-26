@@ -23,7 +23,7 @@ int main()
    for(k = 1; k < 9;k++)
    {
        ledOnOff(k,1);
-       sleep(2);
+       sleep(2); // delay 2sec
        ledOnOff(k,0);
    }
    printf("Train Arrived!!!\n");
