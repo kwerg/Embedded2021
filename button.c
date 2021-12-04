@@ -13,7 +13,12 @@
 #define PROBE_FILE "/proc/bus/input/devices" //PPT에 제시된 "이 파일을 까보면 event? 의 숫자를 알수 있다"는 바로 그 파일
 #define HAVE_TO_FIND_1 "N: Name=\"ecube-button\"\n"
 #define HAVE_TO_FIND_2 "H: Handlers=kbd event"
+#define MY_MESSAGE_ID 8282
 
+static pthread_t buttonTh_id;
+static int fd;
+static int msgID;
+static BUTTON_MSG_T messageTxData;
 
 int probeButtonPath(char *newPath)
 {
@@ -53,14 +58,15 @@ int probeButtonPath(char *newPath)
 	
 void* buttonThFunc(void)
 {
-    int fp;
     int readSize,inputIndex;
-    int msgID = msgget(msgID, IPC_CREAT|0666);
     struct input_event stEvent;
     BUTTON_MSG_T messageTxData;
+    messageTxData.messageNum = 1;
+    int msgID = msgget((key_t)MY_MESSAGE_ID, IPC_CREAT|0666);
+
     while(1)
     {
-        readSize = read(fp, &stEvent , sizeof(stEvent));
+        readSize = read(fd, &stEvent , sizeof(stEvent));              
         if (readSize != sizeof(stEvent))
         {
             continue;
@@ -70,40 +76,45 @@ void* buttonThFunc(void)
             printf("EV_KEY(");
             switch(stEvent.code)
             {
-                case KEY_VOLUMEUP: messageTxData.keyInput = 1; break;
-                case KEY_HOME: messageTxData.keyInput = 2; break;
+                case KEY_VOLUMEUP: messageTxData.keyInput = 5; break;
+                case KEY_HOME: messageTxData.keyInput = 1; break;
                 case KEY_SEARCH: messageTxData.keyInput = 3; break;
-                case KEY_BACK: messageTxData.keyInput = 4; break;
-                case KEY_MENU: messageTxData.keyInput = 5; break;
+                case KEY_BACK: messageTxData.keyInput = 2; break;
+                case KEY_MENU: messageTxData.keyInput = 4; break;
                 case KEY_VOLUMEDOWN: messageTxData.keyInput = 6; break;
             }
-            if ( stEvent.value ) 
-            {
-                messageTxData.pressed = 1;
-                msgsnd(msgID, &messageTxData, sizeof(messageTxData.keyInput)+sizeof(messageTxData.pressed), 0);
-            }
-            else printf("released\n");
+            if ( stEvent.value ) messageTxData.pressed = 1;
+            else messageTxData.pressed = 0;
+            msgsnd(msgID, &messageTxData, sizeof(messageTxData)-sizeof(long int), 0);
         } //End of if
         else // EV_SYN
             ; // do notthing
     } // End of While
-        close(fp);
+        close(fd);
 }
  
 
 int buttonInit()
 {  	
-    char buttonPath[200]={0,};	
+	char buttonPath[200]={0,};	
 	if ( probeButtonPath(buttonPath) == 0)
 	{
 		printf ("ERROR! File Not Found!\r\n");
 		printf ("Did you insmod?\r\n");
 		return 0;
 	}
-	int fd=open(buttonPath, O_RDONLY);
-	int msgID = msgget(msgID, IPC_CREAT|0666);
-	pthread_t buttonTh_id;
-	int err = pthread_create(&buttonTh_id, NULL, &buttonThFunc, NULL);
-	pthread_join(buttonTh_id, NULL);
+	fd=open(buttonPath, O_RDONLY);
+	if(fd == -1)
+        printf("open error\r\n");    
+	else
+        printf("open success\r\n");
+	
+	int err = pthread_create(&buttonTh_id, NULL, (void*)(*buttonThFunc), NULL);
+	if(err == 0)
+        printf("pthread_create success\r\n");    
+	else
+        printf("pthread_create failed\r\n");    
+
+	pthread_detach(buttonTh_id);
 	return 1;
 }
