@@ -15,7 +15,7 @@
 #define COLUMN_NUM			16
 #define TEXLCD_DRIVER_NAME      "/dev/peritextlcd"
 
-void lcdtextwrite(const char *str1,int lineFlag)
+int lcdtextwrite(const char *str1,int lineFlag)
 {
     stTextLCD stlcd;
     int fd;
@@ -52,7 +52,7 @@ void lcdtextwrite(const char *str1,int lineFlag)
     return 0;
 }
 
-void ledtextON()
+int ledtextON()
 {
     stTextLCD stlcd;
     int fd;
