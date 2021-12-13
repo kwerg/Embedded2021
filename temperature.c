@@ -28,7 +28,7 @@ int spi_init(char filename[40])
     { perror("SPI rd_lsb_fist"); return 0; }
     if (ioctl(file, SPI_IOC_RD_BITS_PER_WORD, &bits) < 0)
     { perror("SPI bits_per_word"); return 0; }
-    printf("%s: spi mode %d, %d bits %sper word, %d Hz max\n",filename, mode, bits, lsb ? "(lsb first) " : "", speed);
+    //printf("%s: spi mode %d, %d bits %sper word, %d Hz max\n",filename, mode, bits, lsb ? "(lsb first) " : "", speed);
     return file;
 }
 
@@ -63,6 +63,6 @@ double temperature(void)
     //다 바꿈
     double temp = (double)value*0.0625;
     //1비트가 0.0625도
-    printf("Current Temp: %lf \n", temp);
+    //printf("Current Temp: %lf \n", temp);
     return temp;
 }

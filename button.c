@@ -73,7 +73,6 @@ void* buttonThFunc(void)
         }
         if ( stEvent.type == EV_KEY)
         {
-            printf("EV_KEY(");
             switch(stEvent.code)
             {
                 case KEY_VOLUMEUP: messageTxData.keyInput = 5; break;
