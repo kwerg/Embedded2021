@@ -12,6 +12,8 @@
 #include "textlcddrv.h" 
 #include "temperature.h"
 #include "fnddrv.h"
+#include "buzzer.h"
+#include "colorled.h"
 #define MY_MESSAGE_ID 8282
 
 void* print_temp(void);               //온도센서에서 온도값 얻어서 fnd에 출력하는 함수 
@@ -29,8 +31,21 @@ static int msgID;
 int main(void)
 {
     //led
-   ledLibInit();                                   //led init
-    
+    ledLibInit();    //led init
+    buzzerInit();
+
+    pwmActiveAll();
+
+    pwmSetDuty(0,0);
+    pwmSetDuty(0,1);
+    pwmSetDuty(0,2);
+
+    pwmSetPeriod(1000000,0);
+    pwmSetPeriod(1000000,1);
+    pwmSetPeriod(1000000,2);
+
+    pwmStartAll();
+
     //button
     BUTTON_MSG_T2 messageRxData;
     messageRxData.messageNum = 1;                  
@@ -42,14 +57,28 @@ int main(void)
         ledtextON();
         lcdtextwrite("Stop",1);         //기차 정차 상태, 정차한 이후  문열림, 문닫힘 상태 구현해야합니다  
         ledtextON();
+        lcdtextwrite("DOOR OPEN",2); //&&&&
+
+        pwmSetPercent(100,0);
+        pwmSetPercent(80,1);   // Green
+        pwmSetPercent(100,2);  
 
         while(messageRxData.keyInput != 1) //1번키 = 출발버튼 눌리기 전까지 stop 유지하다가 눌리면 moving으로 상태표시 변환
         {
             msgrcv(msgID, &messageRxData, sizeof(messageRxData)-sizeof(long int), 0, IPC_NOWAIT);
             if(messageRxData.keyInput == 1)
             {  
+                lcdtextwrite("DOOR CLOSE",2); //&&&&
                 lcdtextwrite("Moving",1);
                 ledtextON();
+
+                pwmSetPercent(80,0);   //Red
+                pwmSetPercent(100,1);
+                pwmSetPercent(100,2);
+
+                buzzerPlaySong(440); //&&&&
+                sleep(1);  //&&&&
+                buzzerStopSong(); //&&&&
             }
         }       
         int j = 2;             //led 간격 기본 2초로 설정
@@ -75,7 +104,19 @@ int main(void)
             ledOnOff(k,0);        
         } 
     }
-   ledLibExit();
+
+    buzzerPlaySong(440); //&&&&
+    sleep(1);  //&&&&
+    buzzerStopSong(); //&&&&
+    lcdtextwrite("DOOR OPEN",2); //&&&&
+    lcdtextwrite("Arrived",1);
+    ledtextON();
+
+    pwmSetPercent(100,0);
+    pwmSetPercent(80,1);   // Green
+    pwmSetPercent(100,2);
+
+    ledLibExit();
     return 0;
 }
 
