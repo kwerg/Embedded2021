@@ -36,45 +36,8 @@ int buzzerInit(void)
     return ifNotFound;
 }
 
-int buzzerPlaySong(int scale) // 0: 도 , 1:레,....,8:도
+int buzzerPlaySong(int frequency) 
 {
-    int frequency;
-
-    switch(scale)
-    {
-        case 1: 
-            frequency = 262;
-            break;
-
-        case 2:
-            frequency = 294;
-            break;
-
-        case 3:
-            frequency = 330;
-            break;
-
-        case 4:
-            frequency = 349;
-            break;
-
-        case 5:
-            frequency = 392;
-            break;
-
-        case 6:
-            frequency = 440;
-            break;
-
-        case 7:
-            frequency = 494;
-            break;
-        
-        case 8:
-            frequency = 523;
-            break;  
-    }
-
     char path[200];
 
     sprintf(path,"%s%s",gBuzzerBaseSysDir,BUZZER_ENABLE_NAME);
