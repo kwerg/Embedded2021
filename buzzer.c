@@ -59,3 +59,14 @@ int buzzerStopSong(void)
     write(fd, &"0", 1);
     close(fd);
 }
+
+void buzzer_Door_alarm(void)                    // Yongin Everline Door open/close alarm
+{
+    buzzerPlaySong(1109); //C# 6 Octave
+    sleep(1);  
+    buzzerPlaySong(1661); //G# 6 Octave
+    sleep(1);  
+    buzzerPlaySong(2217); //C# 7 Octave
+    sleep(2);  
+    buzzerStopSong();
+}
