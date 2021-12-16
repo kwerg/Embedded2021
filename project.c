@@ -111,6 +111,38 @@ int main(void)
         sleep(1);
         lcdtextwrite("Stop",1);         //기차 정차 상태, 정차한 이후  문열림, 문닫힘 상태 구현해야합니다  
         ledtextON();
+<<<<<<< HEAD
+=======
+        while(1)
+        {
+            msgrcv(msgID, &messageRxData, sizeof(messageRxData)-sizeof(long int), 0, 0);
+            if(messageRxData.keyInput == 4)
+            {
+                lcdtextwrite("DOOR OPEN",2); //&&&&
+                ledtextON();
+                buzzerPlaySong(440); //&&&&
+                sleep(1);  //&&&&
+                buzzerStopSong(); //&&&&
+                break;
+            }
+        }
+
+        while(1)
+        {
+            msgrcv(msgID, &messageRxData, sizeof(messageRxData)-sizeof(long int), 0, 0);
+            if(messageRxData.keyInput == 5)
+            {
+                lcdtextwrite("DOOR CLOSE",2); //&&&&
+                ledtextON();
+                buzzerPlaySong(440); //&&&&
+                sleep(1);  //&&&&
+                lcdtextwrite("Ready",2); //&&&&
+                ledtextON();
+                buzzerStopSong(); //&&&&
+                break;
+            }
+        }
+>>>>>>> 10936c5ed33c12716205a75cb6872542378a4374
     }
     pwmStopAll();
     pwmInactiveAll();
