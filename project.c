@@ -186,14 +186,26 @@ void* print_temp(void)
 
 void* print_jpg(void)
 {
-        BUTTON_MSG_T2 messageRxData;
-        messageRxData.messageNum = 1; 
-        while(messageRxData.keyInput != 1) //1번키 = 출발버튼 눌리기 전까지 stop 유지하다가 눌리면 moving으로 상태표시 변환
+    BUTTON_MSG_T2 messageRxData;
+    messageRxData.messageNum = 1;
+
+    while(1)
+    { 
+        while(messageRxData.keyInput != 1) //1번키 = 출발버튼 눌리기 전까지 stop 유지하다가 눌리면 moving으로 상태표시 
         {
             msgrcv(msgID, &messageRxData, sizeof(messageRxData)-sizeof(long int), 0, IPC_NOWAIT);
         }  
-    jpgAnimation();
-    sleep(1);
+        jpgAnimation();
+        while(messageRxData.keyInput != 4)  
+        {
+            msgrcv(msgID, &messageRxData, sizeof(messageRxData)-sizeof(long int), 0, IPC_NOWAIT);
+        }  
+        while(messageRxData.keyInput != 5)  
+        {
+            msgrcv(msgID, &messageRxData, sizeof(messageRxData)-sizeof(long int), 0, IPC_NOWAIT);
+        }  
+    }
 }
+
 
     
